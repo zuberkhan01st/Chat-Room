@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #1f1f1f; /* Dark background */
+    color: #fff; /* Light text */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .message-box {
+    width: 800px; /* Increased width */
+    margin: 50px auto;
+    border: none; /* Remove border */
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #222; /* Dark background */
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+  }
+
+  .message-box h2 {
+    text-align: center;
+    font-size: 1.8em; /* Larger font size */
+    margin-bottom: 30px; /* Increased margin */
+    color: #64ffda; /* Light cyan title color */
+  }
+
+  .messages {
+    height: 400px; /* Increased height */
+    overflow-y: scroll;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #333; /* Darker message box */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* Inner shadow effect */
+  }
+
+  .text {
+    margin-bottom: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #444; /* Dark message background */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Slight shadow */
+  }
+
+  .text strong {
+    font-weight: bold;
+    color: #64ffda; /* Light cyan name */
+  }
+
+  .text .muted {
+    color: #888; /* Lighter text */
+    font-size: 0.9em;
+    float: right; /* Align timestamp to the right */
+  }
+
+  .inputs {
+    display: flex; /* Align input and button horizontally */
+    margin-top: 20px; /* Increased margin */
+  }
+
+  #message {
+    flex: 1; /* Make input field take up most space */
+    padding: 15px;
+    border: 1px solid #555; /* Darker border */
+    border-radius: 8px;
+    margin-right: 15px; /* Add some spacing between input and button */
+    color: #fff; /* Light text */
+    background-color: #333; /* Dark input background */
+  }
+
+  #send-btn {
+    padding: 15px 25px; /* Adjust button padding */
+    background-color: #64ffda; /* Light cyan button */
+    color: #1f1f1f; /* Dark text */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer; /* Indicate clickable button */
+    transition: background-color 0.3s ease;
+  }
+
+  #send-btn:hover {
+    background-color: #1abc9c; /* Darker cyan on hover */
+  }
+</style>
+
+<div class="message-box">
+  <h2>Chat Room: {{ code }}</h2>
+  <div class="messages" id="messages"></div>
+  <div class="inputs">
+    <input type="text" placeholder="Type your message..." name="message" id="message" />
+    <button type="button" name="send" id="send-btn" onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script type="text/javascript">
+  var socket = io(); // Corrected variable name
+
+  const messages = document.getElementById("messages");
+
+  const createMessage = (name, msg) => {
+    const content = `
+      <div class="text">
+        <span>
+          <strong>${name}</strong>: ${msg}
+        </span>
+        <span class="muted">
+          ${new Date().toLocaleString()}
+        </span>
+      </div>
+    `;
+    messages.innerHTML += content;
+    messages.scrollTop = messages.scrollHeight; // Auto-scroll to bottom
+  };
+
+  socket.on("message", (data) => {
+    createMessage(data.name, data.message);
+  });
+
+  const sendMessage = () => {
+    const message = document.getElementById("message");
+    if (message.value.trim() === "") return;
+    socket.emit("message", { data: message.value.trim() });
+    message.value = "";
+  };
+</script>
+
+{% for msg in messages %}
+<script type="text/javascript">
+  createMessage("{{ msg.name }}", "{{ msg.message }}");
+</script>
+{% endfor %}
+{% endblock %}

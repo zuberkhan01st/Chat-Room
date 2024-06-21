@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room Dashboard</title>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='script.js') }}"></script>
+</head>
+<body>
+    <div id="message-box">
+       <h2>Chat Room Code: {{ code }}</h2> 
+       <div id="messages"></div>
+       <input type="text" rows="3" placeholder="Message" id="message">
+       <button type="button" name="send" onclick="sendMessage()">Send</button>
+    </div>
+
+    {% for msg in messages %}
+        <script type="text/javascript">
+            createMessage("{{ msg.name }}", "{{ msg.message }}");
+        </script>
+    {% endfor %}
+</body>
+</html>
