@@ -1,90 +1,83 @@
 {% extends 'base.html' %}
 {% block content %}
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    background-color: #1f1f1f; /* Dark background */
-    color: #fff; /* Light text */
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-
   .message-box {
-    width: 800px; /* Increased width */
+    width: 100%;
+    max-width: 800px;
     margin: 50px auto;
-    border: none; /* Remove border */
-    border-radius: 10px;
     padding: 20px;
-    background-color: #222; /* Dark background */
-    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5); /* Shadow for depth */
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.5);
   }
 
   .message-box h2 {
     text-align: center;
-    font-size: 1.8em; /* Larger font size */
-    margin-bottom: 30px; /* Increased margin */
-    color: #64ffda; /* Light cyan title color */
+    font-size: 2rem;
+    color: #64ffda;
+    margin-bottom: 30px;
   }
 
   .messages {
-    height: 400px; /* Increased height */
+    height: 400px;
     overflow-y: scroll;
     border-radius: 10px;
     padding: 20px;
-    background-color: #333; /* Darker message box */
-    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3); /* Inner shadow effect */
+    background-color: #333;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.3);
   }
 
   .text {
     margin-bottom: 15px;
     padding: 15px;
+    background-color: #444;
     border-radius: 8px;
-    background-color: #444; /* Dark message background */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3); /* Slight shadow */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
   }
 
   .text strong {
-    font-weight: bold;
-    color: #64ffda; /* Light cyan name */
+    color: #64ffda;
   }
 
   .text .muted {
-    color: #888; /* Lighter text */
+    color: #888;
     font-size: 0.9em;
-    float: right; /* Align timestamp to the right */
+    float: right;
   }
 
   .inputs {
-    display: flex; /* Align input and button horizontally */
-    margin-top: 20px; /* Increased margin */
+    display: flex;
+    margin-top: 20px;
   }
 
   #message {
-    flex: 1; /* Make input field take up most space */
+    flex: 1;
     padding: 15px;
-    border: 1px solid #555; /* Darker border */
+    background-color: #333;
+    color: #fff;
+    border: 1px solid #555;
     border-radius: 8px;
-    margin-right: 15px; /* Add some spacing between input and button */
-    color: #fff; /* Light text */
-    background-color: #333; /* Dark input background */
+    margin-right: 15px;
   }
 
   #send-btn {
-    padding: 15px 25px; /* Adjust button padding */
-    background-color: #64ffda; /* Light cyan button */
-    color: #1f1f1f; /* Dark text */
+    padding: 15px 25px;
+    background-color: #64ffda;
+    color: #1f1f1f;
     border: none;
     border-radius: 8px;
-    cursor: pointer; /* Indicate clickable button */
+    cursor: pointer;
     transition: background-color 0.3s ease;
   }
 
   #send-btn:hover {
-    background-color: #1abc9c; /* Darker cyan on hover */
+    background-color: #1abc9c;
+  }
+
+  @media (max-width: 768px) {
+    .message-box {
+      width: 90%;
+    }
   }
 </style>
 
@@ -92,46 +85,47 @@
   <h2>Chat Room: {{ code }}</h2>
   <div class="messages" id="messages"></div>
   <div class="inputs">
-    <input type="text" placeholder="Type your message..." name="message" id="message" />
-    <button type="button" name="send" id="send-btn" onclick="sendMessage()">Send</button>
+    <input
+      type="text"
+      placeholder="Type your message..."
+      name="message"
+      id="message"
+    />
+    <button type="button" id="send-btn" onclick="sendMessage()">Send</button>
   </div>
 </div>
 
 <script type="text/javascript">
-  var socket = io(); // Corrected variable name
+  var socket = io();
 
   const messages = document.getElementById("messages");
 
   const createMessage = (name, msg) => {
     const content = `
       <div class="text">
-        <span>
-          <strong>${name}</strong>: ${msg}
-        </span>
-        <span class="muted">
-          ${new Date().toLocaleString()}
-        </span>
+        <span><strong>${name}</strong>: ${msg}</span>
+        <span class="muted">${new Date().toLocaleString()}</span>
       </div>
     `;
     messages.innerHTML += content;
-    messages.scrollTop = messages.scrollHeight; // Auto-scroll to bottom
+    messages.scrollTop = messages.scrollHeight;
   };
 
-  socket.on("message", (data) => {
+  socket.on("receive_message", (data) => {
     createMessage(data.name, data.message);
   });
 
-  const sendMessage = () => {
-    const message = document.getElementById("message");
-    if (message.value.trim() === "") return;
-    socket.emit("message", { data: message.value.trim() });
-    message.value = "";
-  };
-</script>
+  function sendMessage() {
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value;
+    const name = "{{ name }}";
+    const roomCode = "{{ code }}";
 
-{% for msg in messages %}
-<script type="text/javascript">
-  createMessage("{{ msg.name }}", "{{ msg.message }}");
+    if (message.trim() !== "") {
+      socket.emit("send_message", { name, message, roomCode });
+      createMessage(name, message);
+      messageInput.value = "";
+    }
+  }
 </script>
-{% endfor %}
 {% endblock %}
