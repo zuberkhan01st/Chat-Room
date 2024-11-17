@@ -3,122 +3,126 @@
 {% block content %}
 <style>
   body {
-    font-family: Arial, sans-serif;
     background-color: #1f1f1f; /* Dark background */
     color: #fff; /* Light text */
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    position: relative;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
 
   header {
-    width: 100%;
-    background-color: #333; /* Dark header background */
+    background-color: #333;
+    color: #64ffda;
     padding: 20px 0;
     text-align: center;
     position: fixed;
+    width: 100%;
     top: 0;
-    z-index: 1000; /* Ensure header stays on top */
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+    z-index: 1000;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
   }
 
   h1 {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Change font family */
-    font-size: 28px;
-    color: #64ffda; /* Light cyan title color */
-    margin: 0;
+    font-size: 2rem;
+    font-weight: bold;
+    animation: typewriter 3s steps(30) 1s 1 normal both;
+  }
+
+  @keyframes typewriter {
+    from {
+      width: 0;
+    }
+    to {
+      width: 100%;
+    }
   }
 
   .content {
-    margin-top: 80px; /* Ensure content starts below fixed header */
+    margin-top: 80px; /* Ensures content is below fixed header */
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 100px); /* Adjust to fit content between header and footer */
+    min-height: 100vh;
+    flex-direction: column;
   }
 
-  /* Form and powered by styles continue... */
-
   form {
-    width: 300px;
-    background-color: #333; /* Darker form background */
+    width: 100%;
+    max-width: 400px;
+    background-color: #333;
     padding: 30px;
     border-radius: 8px;
-    box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
   }
 
   h3 {
-    color: #64ffda; /* Light cyan heading */
     text-align: center;
+    color: #64ffda;
+    font-size: 1.8rem;
     margin-bottom: 20px;
   }
 
   label {
     display: block;
     margin-bottom: 5px;
-    color: #64ffda; /* Light cyan label text */
+    color: #64ffda;
   }
 
-  input[type="text"],
-  input[type="password"] {
-    width: calc(100% - 22px); /* Adjust width for padding */
+  input[type="text"], input[type="password"] {
+    width: 100%;
     padding: 10px;
     margin-bottom: 15px;
-    border: 1px solid #444; /* Darker border */
-    background-color: #222; /* Darker input background */
-    color: #fff; /* Light text */
+    background-color: #222;
+    color: #fff;
+    border: 1px solid #444;
     border-radius: 5px;
-    box-sizing: border-box;
     transition: border-color 0.3s ease;
   }
 
-  input[type="text"]:focus,
-  input[type="password"]:focus {
-    border-color: #64ffda; /* Light cyan border on focus */
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: #64ffda;
   }
 
-  input[type="submit"],
   button {
-    width: 100%; /* Full width button */
-    background-color: #64ffda; /* Light cyan button */
-    color: #1f1f1f; /* Dark text */
+    width: 100%;
     padding: 14px 20px;
-    margin: 8px 0;
+    background-color: #64ffda;
+    color: #1f1f1f;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
 
-  input[type="submit"]:hover,
   button:hover {
-    background-color: #1abc9c; /* Darker cyan on hover */
+    background-color: #1abc9c;
   }
 
   .create-btn {
-    background-color: #27ae60; /* Emerald green button */
+    background-color: #27ae60;
   }
 
   .create-btn:hover {
-    background-color: #2ecc71; /* Darker green on hover */
+    background-color: #2ecc71;
   }
 
-  p.error {
-    color: #ff4d4d; /* Light red error message */
+  .error {
+    color: #ff4d4d;
     margin-top: 10px;
   }
 
-  /* Powered by styles */
   .powered-by {
     position: fixed;
     bottom: 10px;
     right: 10px;
     font-size: 12px;
     color: #888;
+  }
+
+  @media (max-width: 768px) {
+    form {
+      width: 80%;
+    }
   }
 </style>
 
@@ -130,11 +134,23 @@
   <form method="post" class="buttons">
     <h3>Enter The Chat Room</h3>
     <div>
-      <label>Name:</label>
-      <input type="text" placeholder="Pick a name!" name="name" value="{{ name }}" required />
+      <label for="name">Name:</label>
+      <input
+        type="text"
+        placeholder="Pick a name!"
+        name="name"
+        value="{{ name }}"
+        required
+      />
     </div>
     <div class="join">
-      <input type="text" placeholder="Room Code" name="code" value="{{ code }}" />
+      <label for="code">Room Code:</label>
+      <input
+        type="text"
+        placeholder="Room Code"
+        name="code"
+        value="{{ code }}"
+      />
       <button type="submit" name="join">Join a Room</button>
     </div>
     <div class="create">
